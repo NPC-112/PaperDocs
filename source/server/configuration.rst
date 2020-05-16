@@ -15,18 +15,30 @@ their respective documentation pages.
 
 * `Spigot Configuration (spigot.yml) <https://www.spigotmc.org/wiki/spigot-configuration/>`_
 
+A popular server optimization list that's updated regularly is available on the
+spigot forums.
+
+* `Spigot Server Optimizations <https://www.spigotmc.org/threads/283181/>`_
+
 .. warning::
     Configuration values change frequently at times. It is possible for the
     information here to be incomplete. If you cannot find what you're looking for
     or think something may be wrong, :doc:`../about/contact`
 
-    Last updated November 24th 2019 for MC 1.14.4, Paper build #230
+    Last updated May 16th 2020 for MC 1.15.2, Paper build #284
 
-Global Settings
-===============
+Uncategorized Settings
+======================
 
-Global settings affect all worlds on the server as well as the core server
-functionality itself.
+These settings effect either the config/console itself or are so new they aren't 
+categorized yet. Expect anything not config related to be moved eventually.
+
+allow-perm-block-break-exploits
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* **default**:false
+* **description**: By default it disables exploits that let players destroy bedrock
+  through pistons, explosions and mushrooom/tree generation.
+* **commit**: `c2f8d1e <https://github.com/PaperMC/Paper/commit/c2f8d1e/>`_
 
 verbose
 ~~~~~~~
@@ -34,17 +46,29 @@ verbose
 * **description**: Sets whether the server should dump all configuration values
   to the server log on startup.
 
-load-permissions-yml-before-plugins
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* **default**: true
-* **description**: Loads bukkit's permission.yml file before plugins, allowing
-  them to check permissions immediately on enable.
+Settings
+========
+
+The main settings section, affects all worlds on the server as well as the core
+server functionality itself.
 
 bungee-online-mode
 ~~~~~~~~~~~~~~~~~~
 * **default**: true
 * **description**: Instructs the server how to handle player UUIDs and data
   when behind bungee. Set to match your proxy's online-mode setting.
+
+chunk-tasks-per-tick
+~~~~~~~~~~~~~~~~~~~~
+* **default**: 1000
+* **description**: Limits chunk *generation* tasks per tick.
+* **commit**: `fcf89e8 <https://github.com/PaperMC/Paper/commit/fcf89e8/>`_
+
+load-permissions-yml-before-plugins
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* **default**: true
+* **description**: Loads bukkit's permission.yml file before plugins, allowing
+  them to check permissions immediately on enable.
 
 region-file-cache-size
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -69,6 +93,7 @@ use-alternative-luck-formula
 * **description**: Use alternative luck formula by Aikar, allowing luck to be
   applied to items that have no quality defined. Makes major changes to fishing
   formulas.
+* **commit**: `df6c35d <https://github.com/PaperMC/Paper/commit/df6c35d#diff-e0dcd44bf7924349b123dfc53c848387>`_
 
 use-versioned-world
 ~~~~~~~~~~~~~~~~~~~
@@ -83,14 +108,6 @@ suggest-player-names-when-null-tab-completions
 * **default**: true
 * **description**: Instructs the server to return a list of players when
   tab-completing if the plugin has no tab completions of its own.
-
-enable-player-collisions
-~~~~~~~~~~~~~~~~~~~~~~~~
-* **default**: true
-* **description**: Sets whether the server should allow players to collide with
-  one another.
-* **warning**: This setting can be broken by plugins interacting with the
-  scoreboard, double check plugins when troubleshooting this value.
 
 save-empty-scoreboard-teams
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,7 +141,7 @@ async-chunks
     - **description**: Sets whether the server should load and save chunks
       asynchronously, improving performance.
 
-* load-threads
+* threads
     - **default**: -1
     - **description**: The number of threads the server should use for world
       saving and loading. This is set to (number of processors - 1) by default.
@@ -216,7 +233,10 @@ timings
       reports.
 
 * hidden-config-entries
-    - **default**: { database, settings.bungeecord-addresses }
+    - **default**: 
+      - database
+      - settings.bungeecord-addresses
+      - settings.velocity-support.secret
     - **description**: Configuration entries to hide in Timings reports.
 
 * history-interval
@@ -239,6 +259,33 @@ World Settings
 
 World settings are configured on a per-world basis. The child-node *default*
 is used for all worlds that do not have their own specific settings.
+
+nether-ceiling-void-damage-height
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* **default**: 0
+* **description**: Set the Y-level where entitys above will receive void damage
+  while in the nether. Setting to 0 will disable.
+
+seed-based-feature-search
+~~~~~~~~~~~~~~~~~~~~~~~~~
+* **default**: true
+* **description**:
+    - **true**: Uses server's seed checking to check whether or not certain 
+      features are in a chunk without loading them. e.g. when running the 
+      /locate command or using treasure maps.
+    - **false** (vanilla): the server will load surrounding chunks up to a radius
+      of 100 chunks in order to search for features.
+* **warning**: Breaks once the seed or generator changes.
+* **commit**: `e0da6d4 <https://github.com/PaperMC/Paper/commit/e0da6d4/>`_
+
+light-queue-size
+~~~~~~~~~~~~~~~~
+* **default**: 20
+* **description**: On shutdown, some queued light upates can be lost because
+  Mojang does not flush the light engine. This setting only puts a cap on max
+  loss, doesn't solve lost updates problem.
+    - *"Don't touch this unless you know you have a problem and ok with the risk."*
+* **commit**: `f5dd491 <https://github.com/PaperMC/Paper/commit/f5dd491/>`_
 
 per-player-mob-spawns
 ~~~~~~~~~~~~~~~~~~~~~
@@ -268,6 +315,11 @@ portal-search-radius
 * **description**: The maximum range the server will use to look for an
   existing nether portal. If it can't find one in that range, it will generate
   a new one.
+  
+portal-create-radius
+~~~~~~~~~~~~~~~~~~~~
+* **default**: 16
+* **description**: Radius server checks for portal generation
 
 fixed-chunk-inhabited-time
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -318,8 +370,9 @@ experience-merge-max-value
 prevent-moving-into-unloaded-chunks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * **default**: false
-* **description**: Sets whether the server will prevent players from moving
-  into unloaded chunks or not.
+* **description**: Prevents players from entering an unloaded chunk, which can
+  cause *more lag*. The true setting will set them back to a safe location
+  instead.
 
 max-auto-save-chunks-per-tick
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -401,16 +454,16 @@ count-all-mobs-for-spawning
 * **description**: Determines whether spawner mobs and other misc mobs are
   counted towards the global mob limit.
 
-keep-spawn-loaded-range
-~~~~~~~~~~~~~~~~~~~~~~~
-* **default**: 8
-* **description**: The range in chunks around spawn to keep loaded.
-
 keep-spawn-loaded
 ~~~~~~~~~~~~~~~~~
 * **default**: true
 * **description**: Instructs the server to keep the spawn chunks loaded at all
   times.
+
+keep-spawn-loaded-range
+~~~~~~~~~~~~~~~~~~~~~~~
+* **default**: 10
+* **description**: The range in chunks around spawn to keep loaded.
 
 auto-save-interval
 ~~~~~~~~~~~~~~~~~~
@@ -464,12 +517,15 @@ use-faster-eigencraft-redstone
   completely overhauling how redstone works. The new algorithms should be
   many times faster than current vanilla ones.
 * **warning**: This may change how redstone works in very extreme edge-cases.
+* **commit**: `0b9983d <https://github.com/PaperMC/Paper/commit/0b9983d/>`_
+
 
 fix-zero-tick-instant-grow-farms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * **default**: true
 * **description**: Enable to fix zero-tick instant farms. See bug `MC-113809
   <https://bugs.mojang.com/browse/MC-113809>`_ for more info.
+  Patched by Mojang in snapshot 18w06a.
 
 nether-ceiling-void-damage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
