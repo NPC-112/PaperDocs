@@ -248,7 +248,7 @@ timings
     - **default**: 3600
     - **description**: The total amount of data to keep for a single report.
     - **warning**: This value is validated server side, massive reports will be
-      rejected by the report site.
+      rejected by the report site!
 
 * server-name
     - **default**: Unknown Server
@@ -259,6 +259,16 @@ World Settings
 
 World settings are configured on a per-world basis. The child-node *default*
 is used for all worlds that do not have their own specific settings.
+
+viewdistances
+~~~~~~~~~~~~~
+* no-tick-view-distance
+    - **default**: -1
+    - **description**: Works alongside the view-distance setting in *server.properties*
+      or *spigot.yml*. Set higher than view-distance to increase the amount of chunks
+      loaded for clients but reduce lag by not ticking ones past view-distance.
+        e.g. If view-distance=7 and no-tick-view-distance=13 then the client can see out
+        13 chunks but the server will only process ticks out to the 7th chunk.
 
 nether-ceiling-void-damage-height
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -275,7 +285,7 @@ seed-based-feature-search
       /locate command or using treasure maps.
     - **false** (vanilla): the server will load surrounding chunks up to a radius
       of 100 chunks in order to search for features.
-* **warning**: Breaks once the seed or generator changes.
+* **warning**: Breaks once the seed or generator changes!
 * **commit**: `e0da6d4 <https://github.com/PaperMC/Paper/commit/e0da6d4/>`_
 
 light-queue-size
@@ -516,7 +526,7 @@ use-faster-eigencraft-redstone
 * **description**: Sets whether the server uses theosib's redstone algorithms,
   completely overhauling how redstone works. The new algorithms should be
   many times faster than current vanilla ones.
-* **warning**: This may change how redstone works in very extreme edge-cases.
+* **warning**: This may change how redstone works in very extreme edge-cases!
 * **commit**: `0b9983d <https://github.com/PaperMC/Paper/commit/0b9983d/>`_
 
 
